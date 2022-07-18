@@ -4,7 +4,7 @@ import java.util.Scanner;
 // 1979. 어디에 단어가 들어갈 수 있을까
 public class WhereCanTheWordsGo {
 
-	// k가 몇개 들어갈 수 있는지 리턴해주는 함수
+	//k가 몇개 들어갈 수 있는지 리턴해주는 함수
 	static int check(int[][] arr,int n, int k) {
 		int result = 0;
 		for (int i=0; i<n; i++) {
