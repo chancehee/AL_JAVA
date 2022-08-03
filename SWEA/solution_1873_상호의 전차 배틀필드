@@ -1,0 +1,162 @@
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+
+public class solution_1873 {
+	static char[][] arr;
+	static char[] Action;
+	static int H, W, N;
+	
+	public static void main(String[] args) throws Exception 
+	{
+		System.setIn(new FileInputStream("input/1873.txt"));
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int TC = Integer.parseInt(br.readLine());
+		
+		// 테스트 케이스 숫자 만큼 반복
+		for (int tc=1; tc<=TC; tc++) 
+		{
+			StringBuilder sb = new StringBuilder();
+			// 자동차의 상태 정보를 담을 객체 선언.
+			Car car = null;
+			String[] HW = br.readLine().split(" ");
+			H = Integer.parseInt(HW[0]);
+			W = Integer.parseInt(HW[1]);
+			
+			// 맵 정보 입력.
+			arr = new char[H][W];
+			for(int i=0; i<H; i++) {
+				String msg = br.readLine();
+				for (int j=0; j<W; j++) {
+					arr[i][j] = msg.charAt(j);
+					char temp = arr[i][j];
+					// 전차의 위치 좌표와 방향 상태를 Car객체에 저장.
+					if (temp == '>' || temp == '<' || temp == 'v' || temp == '^') {
+						car = new Car(i, j, temp);
+					}
+				}
+			}
+			N = Integer.parseInt(br.readLine());
+			Action = br.readLine().toCharArray();
+			//SURSSSSUSLSRSSSURRDSRDS
+			// 명령들을 하나씩 처리해준다.
+			for (int i=0; i<N; i++) {
+				switch (Action[i]) {
+				case 'U':
+					// 전차의 방향을 먼저 회전 시킨다.
+					car.type = '^';
+					// 이동이 가능한 경우(초원인 경우) 이동한다. -> 이동 후 맵 정보 업데이트
+					if (car.r>0 && arr[car.r-1][car.c]== '.') {
+						arr[car.r-1][car.c] = '^';
+						arr[car.r][car.c] = '.';
+						car.r--;
+					} else {
+						// 이동이 불가한 경우 전차의 방향만 맵정보에서 업데이트.
+						arr[car.r][car.c] = '^';
+					}
+					break;
+				
+				case 'D':
+					car.type = 'v';
+					if (car.r<H-1 && arr[car.r+1][car.c]== '.') {
+						arr[car.r+1][car.c] = 'v';
+						arr[car.r][car.c] = '.';
+						car.r++;
+					} else {
+						arr[car.r][car.c] = 'v';
+					}
+					break;
+				
+				case 'L':
+					car.type = '<';
+					if (car.c>0 && arr[car.r][car.c-1]== '.') {
+						arr[car.r][car.c-1] = '<';
+						arr[car.r][car.c] = '.';
+						car.c--;
+					} else {
+						arr[car.r][car.c] = '<';
+					}
+					break;
+				
+				case 'R':
+					car.type = '>';
+					if (car.c<W-1 && arr[car.r][car.c+1]== '.') {
+						arr[car.r][car.c+1] = '>';
+						arr[car.r][car.c] = '.';
+						car.c++;
+					} else {
+						arr[car.r][car.c] = '>';
+					}
+					break;
+				
+				case 'S':
+					shoot(car.r, car.c, car.type, car);
+					break;
+				}
+			}
+			
+			sb.append("#" + tc+" ");
+			for (int i=0; i<H; i++) {
+				String str = new String(arr[i]);
+				sb.append(str+"\n");
+			}
+			
+			System.out.print(sb.toString());
+		}
+	}
+
+	
+	// 대포를 쏘는 경우 (문자 - S) 맵을 업데이트 시켜주는 함수
+	private static void shoot(int r, int c, char type, Car car) {
+		switch (type) {
+		case '^':
+			while (r>0 && arr[--r][c] != '#') {
+				if(arr[r][c] == '*') {
+					arr[r][c] = '.';
+					break;
+				}
+			}
+			break;
+		case 'v':
+			while (r<H-1 && arr[++r][c] != '#') {
+				if(arr[r][c] == '*') {
+					arr[r][c] = '.';
+					break;
+				}
+			}
+			break;
+		case '<':
+			while (c>0 && arr[r][--c] != '#') {
+				if(arr[r][c] == '*') {
+					arr[r][c] = '.';
+					break;
+				}
+			}
+			break;
+		case '>':
+			while (c<W-1 && arr[r][++c] != '#') {
+				if(arr[r][c] == '*') {
+					arr[r][c] = '.';
+					break;
+				}
+			}
+			break;
+		}
+		
+	}
+
+
+	// 전차의 좌표, 방향 정보를 담는 배열
+	static class Car{
+		int r,c;
+		char type;
+		public Car(int r, int c, char type) {
+			super();
+			this.r = r;
+			this.c = c;
+			this.type = type;
+		}
+		
+	}
+}
